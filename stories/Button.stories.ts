@@ -57,3 +57,23 @@ export const Destructive: Story = {
     },
   },
 };
+
+export const IconButton: Story = {
+  args: {
+    children: "Button Text",
+    intent: "primary",
+    size: "lg",
+    icon: 'heart'
+  },
+  argTypes: {
+    size: {
+      options: ["lg", "sm"],
+      control: { type: "inline-radio" },
+    },
+    intent: {
+      options: ['primary', 'secondary', 'destructive'],
+      control: {type: 'inline-radio'}
+    },
+   
+  },
+};

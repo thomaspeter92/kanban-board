@@ -1,7 +1,8 @@
-import React from "react";
+'use client'
 import { cva, VariantProps } from "class-variance-authority";
+import { Icons } from "./Icons";
 
-const buttonStyles = cva("rounded-full py-2 transition-all px-10", {
+const buttonStyles = cva("rounded-full py-2 transition-all px-10 flex items-center gap-2", {
   variants: {
     intent: {
       primary: "bg-purple-dark text-white hover:bg-purple-light",
@@ -20,16 +21,25 @@ const buttonStyles = cva("rounded-full py-2 transition-all px-10", {
 
 type Props = {
   children: React.ReactNode;
-  onClick: () => void;
+  icon?: keyof typeof Icons
+  onClick?: () => void;
+  type?: 'button' | 'submit'
 };
 
 const Button = ({
   children,
   intent,
   size,
-  fullWidth,
+  icon,
+  type,
+  onClick
 }: Props & VariantProps<typeof buttonStyles>) => {
-  return <button className={buttonStyles({ intent, size })}>{children}</button>;
+  const Icon = Icons[icon ? icon : 'heart']
+  return (<button type={type} onClick={onClick} className={buttonStyles({ intent, size })}>
+    {icon ? <Icon size={15} strokeWidth={3} /> : null}
+    {children}
+  </button>
+  );
 };
 
 export default Button;
