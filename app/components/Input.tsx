@@ -1,11 +1,17 @@
-import React from 'react'
+import React from "react";
 
-type Props = {}
+type Props = {};
 
-const Input = (props: Props) => {
+const Input = ({
+  ...props
+}: Props & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
-    <div>Input</div>
-  )
-}
+    <input
+      {...props}
+      type="text"
+      className="px-2 py-3 border rounded border-gray-dark bg-transparent placeholder:black/25 active:text-black text-bodyL focus:outline-none "
+    />
+  );
+};
 
-export default Input
+export default Input;
