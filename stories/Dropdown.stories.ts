@@ -1,30 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "@/app/components/Input";
+import Dropdown from "@/app/components/Dropdown";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: "/Input",
-  component: Input,
+  title: "/Dropdown",
+  component: Dropdown,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
   },
-} satisfies Meta<typeof Input>;
+} satisfies Meta<typeof Dropdown>;
 
 export default meta;
 
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof Dropdown>;
 
 export const Primary: Story = {
   args: {
-    placeholder: "Enter task name",
+    selected: 'Option 1',
+    options: ['Option 1', 'Option 2', 'Option 3']
   },
 };
 
-export const Error: Story = {
-  args: {
-    placeholder: "Enter task name",
-    error: true,
-    errorMessage: "This is an error"
-  },
-};

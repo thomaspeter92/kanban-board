@@ -12,7 +12,9 @@ import {
   MoveRight,
   Menu,
   Heart,
-  Share
+  Share,
+  AlertCircle,
+  ChevronDown
 } from 'lucide-react';
 
 export const Icons = {
@@ -25,5 +27,7 @@ export const Icons = {
   arrowRight: MoveRight,
   menu: Menu,
   heart: Heart,
-  share: Share
+  share: Share,
+  alertCircle: AlertCircle,
+  chevronDown: ChevronDown
 };

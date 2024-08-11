@@ -1,30 +1,28 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "@/app/components/Input";
+import Input from "@/app/components/TaskCheckbox";
+import TaskCheckbox from "@/app/components/TaskCheckbox";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: "/Input",
-  component: Input,
+  title: "/TaskCheckbox",
+  component: TaskCheckbox,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
   },
-} satisfies Meta<typeof Input>;
+} satisfies Meta<typeof TaskCheckbox>;
 
 export default meta;
 
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof TaskCheckbox>;
 
 export const Primary: Story = {
   args: {
-    placeholder: "Enter task name",
+  task: "Example task here."
   },
-};
-
-export const Error: Story = {
-  args: {
-    placeholder: "Enter task name",
-    error: true,
-    errorMessage: "This is an error"
-  },
+  argTypes: {
+    checked: {
+      control: 'boolean'
+    }
+  }
 };
