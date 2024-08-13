@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Button from "@/app/components/Button";
+import Button from "@/components/Button";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -62,7 +62,7 @@ export const IconButton: Story = {
     children: "Button Text",
     intent: "primary",
     size: "lg",
-    icon: 'heart'
+    icon: "heart",
   },
   argTypes: {
     size: {
@@ -70,9 +70,8 @@ export const IconButton: Story = {
       control: { type: "inline-radio" },
     },
     intent: {
-      options: ['primary', 'secondary', 'destructive'],
-      control: {type: 'inline-radio'}
+      options: ["primary", "secondary", "destructive"],
+      control: { type: "inline-radio" },
     },
-   
   },
 };

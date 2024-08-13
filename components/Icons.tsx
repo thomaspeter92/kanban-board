@@ -1,6 +1,3 @@
-
-
-
 import {
   Github,
   Linkedin,
@@ -14,8 +11,13 @@ import {
   Heart,
   Share,
   AlertCircle,
-  ChevronDown
-} from 'lucide-react';
+  ChevronDown,
+  Sun,
+  Moon,
+  LayoutDashboard,
+  Plus,
+  EyeOff,
+} from "lucide-react";
 
 export const Icons = {
   linkedIn: Linkedin,
@@ -29,5 +31,10 @@ export const Icons = {
   heart: Heart,
   share: Share,
   alertCircle: AlertCircle,
-  chevronDown: ChevronDown
+  chevronDown: ChevronDown,
+  sun: Sun,
+  moon: Moon,
+  board: LayoutDashboard,
+  plus: Plus,
+  hide: EyeOff,
 };

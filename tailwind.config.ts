@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: 'class',
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       boxShadow: {
-        "1": '0px 4px 6px rgba(54,78,126,0.1)'
+        "1": "0px 4px 6px rgba(54,78,126,0.1)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -41,7 +41,10 @@ const config: Config = {
       fontSize: {
         headingXl: ["24px", { fontWeight: "700", lineHeight: "30px" }],
         headingL: ["18px", { fontWeight: "700", lineHeight: "23px" }],
-        headingM: ["15px", { fontWeight: "700", lineHeight: "19px" }],
+        headingM: [
+          "15px",
+          { fontWeight: "600", lineHeight: "19px", letterSpacing: "0.5px" },
+        ],
         headingS: [
           "12px",
           { fontWeight: "700", lineHeight: "15px", letterSpacing: "2.4px" },

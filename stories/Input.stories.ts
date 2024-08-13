@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "@/app/components/Input";
+import Input from "@/components/Input";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -25,6 +25,6 @@ export const Error: Story = {
   args: {
     placeholder: "Enter task name",
     error: true,
-    errorMessage: "This is an error"
+    errorMessage: "This is an error",
   },
 };
