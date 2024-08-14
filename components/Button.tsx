@@ -26,7 +26,7 @@ const buttonStyles = cva(
 type Props = {
   children: React.ReactNode;
   icon?: keyof typeof Icons;
-  onClick?: () => void;
+  onClick?: (args: any) => void;
   type?: "button" | "submit";
 };
 

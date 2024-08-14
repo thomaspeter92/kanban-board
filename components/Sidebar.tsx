@@ -1,25 +1,13 @@
+"use client";
+
 import React from "react";
 import { Icons } from "./Icons";
 import Image from "next/image";
 import { images } from "@/util/images";
 import ThemeToggle from "./ThemeToggle";
+import useBoardStore from "@/stores/boardStore";
 
 type Props = {};
-
-const boards = [
-  {
-    href: "",
-    title: "Platform Launch",
-  },
-  {
-    href: "",
-    title: "Marketing Plan",
-  },
-  {
-    href: "",
-    title: "Roadmap",
-  },
-];
 
 const SidbarMenuItem = ({
   title,
@@ -28,11 +16,16 @@ const SidbarMenuItem = ({
 }: {
   title: string;
   active?: boolean;
-  onClick?: () => void;
+  onClick: () => void;
 }) => {
+  const { currentBoard } = useBoardStore();
   const BoardIcon = Icons["board"];
+
   return (
-    <li className="py-5 cursor-pointer flex text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all">
+    <li
+      onClick={onClick}
+      className="py-5 cursor-pointer flex text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all"
+    >
       <BoardIcon size={20} strokeWidth={2.5} />
       {title}
     </li>
@@ -40,9 +33,11 @@ const SidbarMenuItem = ({
 };
 
 const Sidebar = (props: Props) => {
+  const { boards, setCurrentBoard } = useBoardStore();
   const HideIcon = Icons["hide"];
+
   return (
-    <aside className="bg-white dark:bg-gray-darkest w-[260px] py-10 h-screen flex flex-col border-r border-gray-medium dark:border-gray-dark/25">
+    <aside className="bg-white dark:bg-black-light w-[260px] py-10 h-screen flex flex-col border-r border-gray-medium dark:border-gray-dark/25">
       {/* Hide on dark mode */}
       <Image
         className="px-5 mb-10 dark:hidden"
@@ -64,7 +59,9 @@ const Sidebar = (props: Props) => {
       </p>
       <ul className="flex-1">
         {boards.map((d, i) => {
-          return <SidbarMenuItem title={d.title} />;
+          return (
+            <SidbarMenuItem title={d.name} onClick={() => setCurrentBoard(d)} />
+          );
         })}
       </ul>
 

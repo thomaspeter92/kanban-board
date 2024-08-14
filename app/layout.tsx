@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Sidebar from "@/components/Sidebar";
+import Modal from "@/components/Modal";
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -19,13 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${jakartaSans.className} bg-gray-light dark:bg-black-light flex`}
+        className={`${jakartaSans.className} bg-gray-light dark:bg-black-medium flex h-screen`}
       >
         <Sidebar />
-        <div className="flex-1 flex flex-col h-screen">
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
           <Nav />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 p-5 overflow-hidden">{children}</main>
         </div>
+        <Modal />
       </body>
     </html>
   );

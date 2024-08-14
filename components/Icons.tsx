@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   Plus,
   EyeOff,
+  EllipsisVertical,
 } from "lucide-react";
 
 export const Icons = {
@@ -37,4 +38,5 @@ export const Icons = {
   board: LayoutDashboard,
   plus: Plus,
   hide: EyeOff,
+  elipsisVertical: EllipsisVertical,
 };
