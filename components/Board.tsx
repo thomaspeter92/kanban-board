@@ -1,4 +1,4 @@
-import useBoardStore, { Column as ColumnType } from "@/stores/boardStore";
+import useBoardStore, { Column as ColumnType, Task } from "@/stores/boardStore";
 import React from "react";
 import { Icons } from "./Icons";
 import Button from "./Button";
@@ -11,18 +11,19 @@ type Props = {};
 const Column = ({ data }: { data: ColumnType }) => {
   const { toggleModal } = useModalStore();
 
-  const handleOpenTask = (task) => {
+  const handleOpenTask = (task: Task) => {
     toggleModal(<TaskDetail task={task} />);
   };
 
   return (
-    <div className="w-[280px] h-full shrink-0">
-      <h2 className="uppercase text-headingS text-gray-dark">
+    <div className="w-[280px] h-full shrink-0 relative overflow-y-auto no-scrollbar">
+      <h2 className="uppercase text-headingS text-gray-dark sticky top-0 bg-gray-light dark:bg-black-medium pb-5">
         {data.name} ({data?.tasks?.length})
       </h2>
-      <div className="space-y-5 mt-5">
+      <div className="space-y-5">
         {data.tasks.map((d, i) => (
           <CardSmall
+            key={d.id}
             task={d.title}
             subtasks={d.subtasks}
             onClick={() => handleOpenTask(d)}
@@ -64,8 +65,8 @@ const Board = (props: Props) => {
 
   if (currentBoard?.columns?.length && currentBoard?.columns?.length > 0) {
     return (
-      <div className="flex gap-5 h-full overflow-x-auto">
-        {currentBoard?.columns?.map((d) => <Column data={d} />)}
+      <div className="flex gap-5 h-full overflow-x-auto overflow-y-hidden">
+        {currentBoard?.columns?.map((d) => <Column key={d.id} data={d} />)}
         <AddNewColumn />
       </div>
     );

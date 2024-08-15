@@ -60,7 +60,59 @@ const boards: Board[] = [
             status: "TODO",
           },
           {
+            id: "task-efkm",
+            title: "Build UI for search",
+            description: "Develop the search interface for the application.",
+            subtasks: [
+              {
+                id: "subtask-3",
+                title: "Research search patterns",
+                isCompleted: false,
+              },
+            ],
+            status: "TODO",
+          },
+          {
             id: "task-2",
+            title: "Build UI for search",
+            description: "Develop the search interface for the application.",
+            subtasks: [
+              {
+                id: "subtask-3",
+                title: "Research search patterns",
+                isCompleted: false,
+              },
+            ],
+            status: "TODO",
+          },
+          {
+            id: "task-3",
+            title: "Build UI for search",
+            description: "Develop the search interface for the application.",
+            subtasks: [
+              {
+                id: "subtask-3",
+                title: "Research search patterns",
+                isCompleted: false,
+              },
+            ],
+            status: "TODO",
+          },
+          {
+            id: "task-4",
+            title: "Build UI for search",
+            description: "Develop the search interface for the application.",
+            subtasks: [
+              {
+                id: "subtask-3",
+                title: "Research search patterns",
+                isCompleted: false,
+              },
+            ],
+            status: "TODO",
+          },
+          {
+            id: "task-5",
             title: "Build UI for search",
             description: "Develop the search interface for the application.",
             subtasks: [

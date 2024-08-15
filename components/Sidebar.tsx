@@ -60,7 +60,11 @@ const Sidebar = (props: Props) => {
       <ul className="flex-1">
         {boards.map((d, i) => {
           return (
-            <SidbarMenuItem title={d.name} onClick={() => setCurrentBoard(d)} />
+            <SidbarMenuItem
+              key={d.id}
+              title={d.name}
+              onClick={() => setCurrentBoard(d)}
+            />
           );
         })}
       </ul>

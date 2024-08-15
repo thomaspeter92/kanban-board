@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { Icons } from "./Icons";
 
 const buttonStyles = cva(
-  "rounded-full py-2 transition-all px-10 flex items-center gap-2 capitalize",
+  "rounded-full py-2 transition-all px-10 flex items-center gap-2 capitalize justify-center",
   {
     variants: {
       intent: {
@@ -13,8 +13,8 @@ const buttonStyles = cva(
         destructive: "bg-red-dark text-white hover:bg-red-light",
       },
       size: {
-        lg: "text-headingM",
-        sm: "text-bodyM",
+        lg: "text-headingM py-3",
+        sm: "text-bodyM py-2",
       },
       fullWidth: {
         true: "w-full",
@@ -36,6 +36,7 @@ const Button = ({
   size,
   icon,
   type,
+  fullWidth,
   onClick,
 }: Props & VariantProps<typeof buttonStyles>) => {
   const Icon = Icons[icon ? icon : "heart"];
@@ -43,7 +44,7 @@ const Button = ({
     <button
       type={type}
       onClick={onClick}
-      className={buttonStyles({ intent, size })}
+      className={buttonStyles({ intent, size, fullWidth })}
     >
       {icon ? <Icon size={15} strokeWidth={3} /> : null}
       {children}
