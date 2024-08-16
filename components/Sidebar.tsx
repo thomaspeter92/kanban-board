@@ -6,34 +6,40 @@ import Image from "next/image";
 import { images } from "@/util/images";
 import ThemeToggle from "./ThemeToggle";
 import useBoardStore from "@/stores/boardStore";
-
-type Props = {};
+import { Tables } from "@/data/db.types";
+import Link from "next/link";
 
 const SidbarMenuItem = ({
   title,
   active,
-  onClick,
+  id,
+  // onClick,
 }: {
   title: string;
+  id: number;
   active?: boolean;
-  onClick: () => void;
+  // onClick: () => void;
 }) => {
   const { currentBoard } = useBoardStore();
   const BoardIcon = Icons["board"];
 
   return (
-    <li
-      onClick={onClick}
+    <Link
+      href={"/board/" + id}
       className="py-5 cursor-pointer flex text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all"
     >
       <BoardIcon size={20} strokeWidth={2.5} />
       {title}
-    </li>
+    </Link>
   );
 };
 
-const Sidebar = (props: Props) => {
-  const { boards, setCurrentBoard } = useBoardStore();
+type SidebarProps = {
+  boards: Tables<"boards">[];
+};
+
+const Sidebar = ({ boards }: SidebarProps) => {
+  // const { boards, setCurrentBoard } = useBoardStore();
   const HideIcon = Icons["hide"];
 
   return (
@@ -58,14 +64,8 @@ const Sidebar = (props: Props) => {
         All Boards
       </p>
       <ul className="flex-1">
-        {boards.map((d, i) => {
-          return (
-            <SidbarMenuItem
-              key={d.id}
-              title={d.name}
-              onClick={() => setCurrentBoard(d)}
-            />
-          );
+        {boards?.map((d, i) => {
+          return <SidbarMenuItem key={d.id} title={d.title} id={d.id} />;
         })}
       </ul>
 

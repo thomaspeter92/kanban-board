@@ -1,3 +1,5 @@
+"use client";
+
 import useBoardStore, { Column as ColumnType, Task } from "@/stores/boardStore";
 import React from "react";
 import { Icons } from "./Icons";
@@ -5,7 +7,7 @@ import Button from "./Button";
 import CardSmall from "./CardSmall";
 import useModalStore from "@/stores/modalStore";
 import TaskDetail from "./TaskDetail";
-
+import { getAllBoards } from "@/data/BoardManager";
 type Props = {};
 
 const Column = ({ data }: { data: ColumnType }) => {
@@ -61,7 +63,6 @@ const BoardEmpty = () => {
 
 const Board = (props: Props) => {
   const { currentBoard } = useBoardStore();
-  console.log(currentBoard);
 
   if (currentBoard?.columns?.length && currentBoard?.columns?.length > 0) {
     return (

@@ -5,17 +5,15 @@ import Button from "./Button";
 import useBoardStore from "@/stores/boardStore";
 import useModalStore from "@/stores/modalStore";
 import NewTask from "./NewTask";
+import { Tables } from "@/data/db.types";
 
-type Props = {};
-
-const Nav = (props: Props) => {
-
+const Nav = () => {
   const { currentBoard } = useBoardStore();
-  const {toggleModal} = useModalStore()
+  const { toggleModal } = useModalStore();
 
   const handleAddTask = () => {
-    toggleModal(<NewTask />)
-  }
+    toggleModal(<NewTask />);
+  };
 
   return (
     <nav className="h-[96px] w-full border-b border-gray-medium dark:border-gray-dark/25 px-10 bg-white dark:bg-black-light text-black-dark dark:text-white flex items-center justify-between">
