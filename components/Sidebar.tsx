@@ -8,6 +8,7 @@ import ThemeToggle from "./ThemeToggle";
 import useBoardStore from "@/stores/boardStore";
 import { Tables } from "@/data/db.types";
 import Link from "next/link";
+import { routes } from "@/util/routes";
 
 const SidbarMenuItem = ({
   title,
@@ -25,12 +26,22 @@ const SidbarMenuItem = ({
 
   return (
     <Link
-      href={"/board/" + id}
+      href={routes.boards + id}
       className="py-5 cursor-pointer flex text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all"
     >
       <BoardIcon size={20} strokeWidth={2.5} />
       {title}
     </Link>
+  );
+};
+
+const NewBoardButton = () => {
+  const PlusIcon = Icons["plus"];
+  return (
+    <button className="flex items-center gap-3 text-headingM text-gray-dark px-5 py-5 hover:text-purple-dark">
+      <PlusIcon size={20} strokeWidth={2.5} />
+      Create New Board
+    </button>
   );
 };
 
@@ -67,6 +78,7 @@ const Sidebar = ({ boards }: SidebarProps) => {
         {boards?.map((d, i) => {
           return <SidbarMenuItem key={d.id} title={d.title} id={d.id} />;
         })}
+        <NewBoardButton />
       </ul>
 
       <div className="px-5 space-y-5">
