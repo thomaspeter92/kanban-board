@@ -5,7 +5,6 @@ import Button from "./Button";
 import useBoardStore from "@/stores/boardStore";
 import useModalStore from "@/stores/modalStore";
 import NewTask from "./NewTask";
-import { Tables } from "@/data/db.types";
 
 const Nav = () => {
   const { currentBoard } = useBoardStore();

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { images } from "@/util/images";
 import ThemeToggle from "./ThemeToggle";
 import useBoardStore from "@/stores/boardStore";
-import { Tables } from "@/data/db.types";
+// import { Tables } from "@/data/db.types";
 import Link from "next/link";
 import { routes } from "@/util/routes";
 
@@ -46,7 +46,7 @@ const NewBoardButton = () => {
 };
 
 type SidebarProps = {
-  boards: Tables<"boards">[];
+  boards: any;
 };
 
 const Sidebar = ({ boards }: SidebarProps) => {

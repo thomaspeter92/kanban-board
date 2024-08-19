@@ -1,3 +1,4 @@
+import { BoardsTable } from "@/data/db.types";
 import { Board } from "@/stores/boardStore";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -7,7 +8,7 @@ type Props = {};
 const AddBoard = (props: Props) => {
   const { handleSubmit, register } = useForm();
 
-  const onSubmit: SubmitHandler<Board> = (data) => {
+  const onSubmit: SubmitHandler<BoardsTable[]> = (data) => {
     console.log(data);
   };
 
