@@ -1,42 +1,43 @@
 "use client";
 
-import useBoardStore, { Column as ColumnType, Task } from "@/stores/boardStore";
 import React from "react";
 import { Icons } from "./Icons";
 import Button from "./Button";
 import CardSmall from "./CardSmall";
 import useModalStore from "@/stores/modalStore";
 import TaskDetail from "./TaskDetail";
-import { getAllBoards } from "@/data/BoardManager";
-type Props = {};
+import { BoardById } from "@/data/types.BoardManager";
 
-const Column = ({ data }: { data: ColumnType }) => {
+const Column = ({ data }: { data: BoardById["columns"][number] }) => {
   const { toggleModal } = useModalStore();
 
-  const handleOpenTask = (task: Task) => {
+  const handleOpenTask = (task: any) => {
     toggleModal(<TaskDetail task={task} />);
   };
 
   return (
     <div className="w-[280px] h-full shrink-0 relative overflow-y-auto no-scrollbar">
       <h2 className="uppercase text-headingS text-gray-dark sticky top-0 bg-gray-light dark:bg-black-medium pb-5">
-        {data.name} ({data?.tasks?.length})
+        {data?.title} ({data?.tasks?.length})
       </h2>
       <div className="space-y-5">
-        {data.tasks.map((d, i) => (
-          <CardSmall
-            key={d.id}
-            task={d.title}
-            subtasks={d.subtasks}
-            onClick={() => handleOpenTask(d)}
-          />
-        ))}
+        {data?.tasks &&
+          data?.tasks?.length > 0 &&
+          data?.tasks.map((d, i) => (
+            <CardSmall
+              key={d?.taskId}
+              task={d.title}
+              subtasksCount={d.subtasksCount}
+              subtasksCompleted={d.subtasksCompleted}
+              onClick={() => handleOpenTask(d)}
+            />
+          ))}
       </div>
     </div>
   );
 };
 
-const AddNewColumn = (props: Props) => {
+const AddNewColumn = () => {
   const PlusIcon = Icons["plus"];
   return (
     <div className="w-[280px] mt-9 h-full rounded bg-gray-medium dark:bg-black-light shrink-0 flex items-center justify-center">
@@ -61,13 +62,12 @@ const BoardEmpty = () => {
   );
 };
 
-const Board = (props: Props) => {
-  const { currentBoard } = useBoardStore();
-
-  if (currentBoard?.columns?.length && currentBoard?.columns?.length > 0) {
+const Board = ({ board }: { board: BoardById }) => {
+  console.log(board);
+  if (board?.columns?.length && board?.columns?.length > 0) {
     return (
       <div className="flex gap-5 h-full overflow-x-auto overflow-y-hidden">
-        {currentBoard?.columns?.map((d) => <Column key={d.id} data={d} />)}
+        {board?.columns?.map((d) => <Column key={d?.columnId} data={d} />)}
         <AddNewColumn />
       </div>
     );

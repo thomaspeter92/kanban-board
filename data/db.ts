@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 // import { Tables } from "@/types/supabase";
 import { PostgresDialect, Kysely } from "kysely";
-import { Database } from "./db.types";
+import { Database } from "./types.db";
 
 const dialect = new PostgresDialect({
   pool: new Pool({

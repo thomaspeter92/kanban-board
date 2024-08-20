@@ -5,16 +5,17 @@ import React from "react";
 
 type Props = {
   task: string;
-  subtasks: any[];
+  subtasksCount: number;
+  subtasksCompleted: number;
   onClick?: () => void;
 };
 
-const CardSmall = ({ task, subtasks, onClick }: Props) => {
-  const subtasksCompleted = subtasks?.reduce(
-    (acc, curr) => (curr.isCompleted ? acc + 1 : acc),
-    0
-  );
-
+const CardSmall = ({
+  task,
+  subtasksCount,
+  subtasksCompleted,
+  onClick,
+}: Props) => {
   return (
     <div
       onClick={onClick}
@@ -23,9 +24,9 @@ const CardSmall = ({ task, subtasks, onClick }: Props) => {
       <p className="text-headingM mb-3 dark:text-gray-light text-gray-darkest">
         {task}
       </p>
-      {subtasks ? (
+      {subtasksCount > 0 ? (
         <p className="text-bodyM text-gray-dark">
-          {subtasksCompleted} of {subtasks?.length} completed.
+          {subtasksCompleted} of {subtasksCount} completed.
         </p>
       ) : null}
     </div>

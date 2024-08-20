@@ -1,5 +1,13 @@
 import { Generated, Insertable, Selectable, Updateable } from "kysely";
 
+/**
+ *
+ * This file is used for typing the database tables & the relations.
+ *
+ * These ARE NOT the types for the API responses.
+ *
+ **/
+
 export interface Database {
   boards: BoardsTable;
   columns: ColumnsTable;

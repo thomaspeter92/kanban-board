@@ -9,8 +9,14 @@ import { Subtask, Task } from "@/stores/boardStore";
 import { Icons } from "./Icons";
 import { error } from "console";
 import { stat } from "fs";
+import { createNewTask } from "@/data/BoardManager";
+import {
+  AddNewTaskSchema,
+  AddNewTask as AddNewTaskType,
+} from "@/data/types.BoardManager";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const NewTask = () => {
+const AddNewTask = () => {
   const RemoveIcon = Icons["close"];
 
   const {
@@ -20,19 +26,27 @@ const NewTask = () => {
     formState: { errors },
     watch,
     setValue,
-  } = useForm<Task>({ defaultValues: { status: "todo" } });
+  } = useForm<AddNewTaskType>({
+    // defaultValues: { columnId:  },
+    resolver: zodResolver(AddNewTaskSchema),
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "subtasks", // This corresponds to the subtasks array in Inputs
   });
 
-  const onSubmit: SubmitHandler<Task> = (values) => {
+  const onSubmit: SubmitHandler<AddNewTaskType> = (values) => {
     console.log(values);
+    // createNewTask({
+    //   columnId: 1,
+    //   title: "Task",
+    //   description: "",
+    // });
   };
 
   const addSubtask = () => {
-    append({ title: "", isCompleted: false, id: "" }); // Add a new empty subtask
+    append({ title: "" }); // Add a new empty subtask
   };
 
   return (
@@ -53,12 +67,13 @@ const NewTask = () => {
       <div className="space-y-2 overflow-y-auto">
         <label className="text-bodyM text-gray-dark">Subtasks</label>
         {fields.map((field, index) => (
-          <div key={field.title + field.id} className="flex gap-2 items-center">
+          <div key={field + field.id} className="flex gap-2 items-center">
             <Input
               {...register(`subtasks.${index}.title` as const, {
                 required: true,
               })}
-              defaultValue={field.title} // Important to provide default value for proper initialization
+              defaultValue={field.title}
+              // Important to provide default value for proper initialization
             />
             <button onClick={() => remove(index)} className="text-gray-dark">
               <RemoveIcon />
@@ -76,11 +91,12 @@ const NewTask = () => {
         </Button>
       </div>
 
-      <Dropdown
+      <Input {...register("columnId")} defaultValue={1} />
+      {/* <Dropdown
         onChange={(value: string) => setValue("status", value)}
         options={["doing", "done", "finished"]}
         value={watch("status")}
-      />
+      /> */}
 
       <Button type="submit" fullWidth intent="primary" icon="plus" size="lg">
         Create Task
@@ -89,4 +105,4 @@ const NewTask = () => {
   );
 };
 
-export default NewTask;
+export default AddNewTask;

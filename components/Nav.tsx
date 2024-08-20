@@ -4,7 +4,7 @@ import React from "react";
 import Button from "./Button";
 import useBoardStore from "@/stores/boardStore";
 import useModalStore from "@/stores/modalStore";
-import NewTask from "./NewTask";
+import NewTask from "./AddNewTask";
 
 const Nav = () => {
   const { currentBoard } = useBoardStore();

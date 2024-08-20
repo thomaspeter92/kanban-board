@@ -1,5 +1,8 @@
 import { sql } from "kysely";
 import db from "./db";
+import { AddNewTask, AddNewTaskSchema, BoardById } from "./types.BoardManager";
+import { errorCodes } from "@/util/errorCodes";
+import ErrorReponse from "@/util/ErrorReponse";
 
 export const getAllBoards = async () => {
   try {
@@ -8,16 +11,31 @@ export const getAllBoards = async () => {
   } catch {}
 };
 
-export const getBoardById = async (id: number) => {
+/**
+ *
+ *
+ */
+
+export const getBoardById = async (id: number): Promise<BoardById> => {
   try {
+    // First, fetch the board details
+    const board = await db
+      .selectFrom("boards")
+      .select(["id as boardId", "title as boardTitle"])
+      .where("id", "=", id)
+      .executeTakeFirst();
+
+    // If there is no board throw error.
+    if (!board) {
+      throw new ErrorReponse(404, errorCodes[404]);
+    }
+
+    // Then, fetch columns
     const rows = await db
-      .selectFrom("boards as b")
-      .innerJoin("columns as c", "c.board_id", "b.id")
-      .innerJoin("tasks as t", "t.column_id", "c.id")
+      .selectFrom("columns as c")
+      .leftJoin("tasks as t", "t.column_id", "c.id")
       .leftJoin("subtasks as st", "st.task_id", "t.id")
       .select(({ fn }) => [
-        "b.id as boardId",
-        "b.title as boardTitle",
         "c.id as columnId",
         "c.title as columnTitle",
         "t.id as taskId",
@@ -27,16 +45,17 @@ export const getBoardById = async (id: number) => {
           .sum(sql`CASE WHEN st.is_completed THEN 1 ELSE 0 END`)
           .as("subtasksCompleted"),
       ])
-      .where("b.id", "=", id)
-      .groupBy(["b.id", "c.id", "t.id"])
+      .where("c.board_id", "=", id)
+      .groupBy(["c.id", "t.id"])
       .orderBy("c.id")
       .orderBy("t.id")
       .execute();
 
     //Formatting the result for the response.
-    const board: any = {
+    const result: BoardById = {
       boardId: id,
-      title: rows[0]?.boardTitle,
+      title: board.boardTitle,
+      columns: [],
     };
 
     const columnMap = new Map<number, any>();
@@ -50,20 +69,31 @@ export const getBoardById = async (id: number) => {
         });
       }
 
-      columnMap.get(row.columnId).tasks.push({
-        taskId: row.taskId,
-        title: row.taskTitle,
-        subtasksCount: row.subtasksCount,
-        subtasksCompleted: row.subtasksCompleted,
-      });
+      if (row.taskId !== null) {
+        columnMap.get(row.columnId).tasks.push({
+          taskId: row.taskId,
+          title: row.taskTitle,
+          subtasksCount: row.subtasksCount,
+          subtasksCompleted: row.subtasksCompleted,
+        });
+      }
     });
 
-    board["columns"] = Array.from(columnMap.values());
+    result["columns"] = Array.from(columnMap.values());
 
-    console.log(board.columns[1]);
-
-    //     return board;board
+    return result;
   } catch (error) {
-    console.error(error);
+    throw error;
   }
+};
+
+export const createNewTask = async (data: AddNewTask) => {
+  //First, validate the data is the correct format
+  if (AddNewTaskSchema.parse(data)) {
+    console.log("CORRECT");
+  } else {
+    console.log("FAIL");
+  }
+
+  return;
 };
