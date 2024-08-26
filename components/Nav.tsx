@@ -16,10 +16,12 @@ const Nav = () => {
 
   return (
     <nav className="h-[96px] w-full border-b border-gray-medium dark:border-gray-dark/25 px-10 bg-white dark:bg-black-light text-black-dark dark:text-white flex items-center justify-between">
-      <h1 className="text-headingXl">{currentBoard?.name}</h1>
-      <Button icon="plus" intent="primary" onClick={handleAddTask}>
-        Add New Task
-      </Button>
+      <h1 className="text-headingXl">{currentBoard?.title}</h1>
+      {currentBoard ? (
+        <Button icon="plus" intent="primary" onClick={handleAddTask}>
+          Add New Task
+        </Button>
+      ) : null}
     </nav>
   );
 };

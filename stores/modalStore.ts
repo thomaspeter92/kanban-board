@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 type State = {
   isOpen: boolean;
-  toggleModal: (modalContent: React.ReactNode) => void;
+  toggleModal: (modalContent: React.ReactNode | null) => void;
   modalContent: React.ReactNode | null;
 };
 

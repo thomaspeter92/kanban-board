@@ -1,12 +1,19 @@
 import { sql } from "kysely";
 import db from "./db";
-import { AddNewTask, AddNewTaskSchema, BoardById } from "./types.BoardManager";
+import {
+  AddNewTask,
+  AddNewTaskSchema,
+  BoardById,
+  UpdateTask,
+  UpdateTaskSchema,
+} from "./types.BoardManager";
 import { errorCodes } from "@/util/errorCodes";
 import ErrorReponse from "@/util/ErrorReponse";
 
-export const getAllBoards = async () => {
+export const getAllBoards = async (): Promise<any> => {
   try {
     const rows = await db.selectFrom("boards").selectAll().execute();
+    console.log(rows);
     return rows;
   } catch {}
 };
@@ -40,13 +47,18 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
         "c.title as columnTitle",
         "t.id as taskId",
         "t.title as taskTitle",
+        "t.description as taskDescription",
+        "t.created_at as createdAt",
+        "st.id as subtaskId",
+        "st.title as subtaskTitle",
+        "st.is_completed as isCompleted",
         fn.count("st.id").as("subtasksCount"),
         fn
           .sum(sql`CASE WHEN st.is_completed THEN 1 ELSE 0 END`)
           .as("subtasksCompleted"),
       ])
       .where("c.board_id", "=", id)
-      .groupBy(["c.id", "t.id"])
+      .groupBy(["c.id", "t.id", "st.id"])
       .orderBy("c.id")
       .orderBy("t.id")
       .execute();
@@ -59,6 +71,7 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
     };
 
     const columnMap = new Map<number, any>();
+    const taskMap = new Map<number, any>();
 
     rows.forEach((row) => {
       if (!columnMap.has(row.columnId)) {
@@ -69,12 +82,28 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
         });
       }
 
-      if (row.taskId !== null) {
-        columnMap.get(row.columnId).tasks.push({
+      // Add task to the map if not already present
+      if (row.taskId !== null && !taskMap.has(row.taskId)) {
+        const task = {
           taskId: row.taskId,
           title: row.taskTitle,
+          columnId: row.columnId,
+          description: row.taskDescription,
+          subtasks: [],
           subtasksCount: row.subtasksCount,
           subtasksCompleted: row.subtasksCompleted,
+          createdAt: row.createdAt,
+        };
+        taskMap.set(row.taskId, task);
+        columnMap.get(row.columnId).tasks.push(task);
+      }
+
+      // Add subtasks to the corresponding task
+      if (row.subtaskId !== null && row.taskId) {
+        taskMap.get(row.taskId).subtasks.push({
+          id: row.subtaskId,
+          title: row.subtaskTitle,
+          isCompleted: row.isCompleted,
         });
       }
     });
@@ -88,12 +117,75 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
 };
 
 export const createNewTask = async (data: AddNewTask) => {
-  //First, validate the data is the correct format
-  if (AddNewTaskSchema.parse(data)) {
-    console.log("CORRECT");
-  } else {
-    console.log("FAIL");
-  }
+  try {
+    //First, validate the data is the correct format
+    AddNewTaskSchema.parse(data);
+    const result = await db.transaction().execute(async (trx) => {
+      // First insert to tasks table
+      const taskInsert = await trx
+        .insertInto("tasks")
+        .returning("tasks.id")
+        .values({
+          title: data.title,
+          column_id: data.columnId,
+          description: data.description,
+        })
+        .executeTakeFirst();
 
-  return;
+      const taskId = taskInsert?.id;
+
+      // Insert each subtask into the subtasks table
+      // First format them into object with the task id
+      if (data.subtasks && data.subtasks.length > 0) {
+        const subtasksInsert = data.subtasks.map((subtask) => ({
+          task_id: taskId,
+          title: subtask.title,
+        }));
+        await trx.insertInto("subtasks").values(subtasksInsert).execute();
+      }
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateTask = async (data: UpdateTask) => {
+  try {
+    // Validate the the data
+    UpdateTaskSchema.parse(data);
+
+    const result = await db.transaction().execute(async (trx) => {
+      // First update  tasks table
+      const taskUpdate = await trx
+        .updateTable("tasks")
+        .returning("tasks.id")
+        .set({
+          title: data.title,
+          column_id: data.columnId,
+          description: data.description,
+        })
+        .where("id", "=", data.taskId)
+        .executeTakeFirst();
+
+      if (data.subtasks && data.subtasks.length > 0) {
+        // Iterate over each subtask and update them
+        for (const subtask of data.subtasks) {
+          await trx
+            .updateTable("subtasks")
+            .set({
+              title: subtask.title,
+              is_completed: subtask.isCompleted,
+            })
+            .where("id", "=", subtask.id) // Assuming each subtask has a unique 'id'
+            .execute();
+        }
+      }
+      return taskUpdate;
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };

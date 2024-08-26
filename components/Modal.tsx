@@ -14,7 +14,7 @@ const Modal = ({ isStorybook }: Props) => {
     <Dialog open={isStorybook ? true : isOpen} onClose={toggleModal}>
       <DialogBackdrop className="fixed inset-0 bg-black-dark/50 backdrop-blur-sm" />
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="w-[480px] max-h-full  max-w-full space-y-4 bg-white dark:bg-black-light shadow-1 rounded-lg">
+        <DialogPanel className="w-[480px]  max-h-full  max-w-full space-y-4 bg-white dark:bg-black-light shadow-1 rounded-lg">
           {modalContent}
         </DialogPanel>
       </div>

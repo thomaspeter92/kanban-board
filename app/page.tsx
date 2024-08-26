@@ -9,10 +9,5 @@ import useBoardStore from "@/stores/boardStore";
 import Board from "@/components/Board";
 
 export default function Home() {
-  const { currentBoard } = useBoardStore();
-
-  if (currentBoard) {
-    return <Board />;
-  }
   return <div></div>;
 }

@@ -1,7 +1,11 @@
-import { Pool } from "pg";
+import { Pool, types } from "pg";
 // import { Tables } from "@/types/supabase";
 import { PostgresDialect, Kysely } from "kysely";
 import { Database } from "./types.db";
+
+// Override the parser for BIGINT and NUMERIC to return integers (JS Problem with Postgres)
+types.setTypeParser(20, (val) => parseInt(val, 10)); // 20 is the OID for BIGINT
+types.setTypeParser(1700, (val) => parseFloat(val)); // 1700 is the OID for NUMERIC
 
 const dialect = new PostgresDialect({
   pool: new Pool({

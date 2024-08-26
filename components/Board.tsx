@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Icons } from "./Icons";
 import Button from "./Button";
 import CardSmall from "./CardSmall";
 import useModalStore from "@/stores/modalStore";
 import TaskDetail from "./TaskDetail";
 import { BoardById } from "@/data/types.BoardManager";
+import useBoardStore from "@/stores/boardStore";
 
 const Column = ({ data }: { data: BoardById["columns"][number] }) => {
   const { toggleModal } = useModalStore();
@@ -63,7 +64,15 @@ const BoardEmpty = () => {
 };
 
 const Board = ({ board }: { board: BoardById }) => {
-  console.log(board);
+  const { setCurrentBoard } = useBoardStore();
+
+  // When mounting this component, set the current board state for client components within the app to acess it.
+  useEffect(() => {
+    setCurrentBoard(board);
+    // Clean up when user leaves the board page
+    return () => setCurrentBoard(null);
+  }, [board, setCurrentBoard]);
+
   if (board?.columns?.length && board?.columns?.length > 0) {
     return (
       <div className="flex gap-5 h-full overflow-x-auto overflow-y-hidden">

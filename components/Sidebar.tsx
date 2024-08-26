@@ -9,17 +9,16 @@ import useBoardStore from "@/stores/boardStore";
 // import { Tables } from "@/data/db.types";
 import Link from "next/link";
 import { routes } from "@/util/routes";
+import { GetAllBoards } from "@/data/types.BoardManager";
 
 const SidbarMenuItem = ({
   title,
   active,
   id,
-  // onClick,
 }: {
   title: string;
   id: number;
   active?: boolean;
-  // onClick: () => void;
 }) => {
   const { currentBoard } = useBoardStore();
   const BoardIcon = Icons["board"];
@@ -46,11 +45,10 @@ const NewBoardButton = () => {
 };
 
 type SidebarProps = {
-  boards: any;
+  boards: GetAllBoards;
 };
 
 const Sidebar = ({ boards }: SidebarProps) => {
-  // const { boards, setCurrentBoard } = useBoardStore();
   const HideIcon = Icons["hide"];
 
   return (

@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+const GetAllBoardsSchema = z.array(
+  z.object({
+    id: z.number(),
+    title: z.string(),
+    created_at: z.date(),
+  }),
+);
+export type GetAllBoards = z.infer<typeof GetAllBoardsSchema>;
+
 const GetBoardByIdSchema = z.object({
   boardId: z.number(),
   title: z.string(),
@@ -11,10 +20,19 @@ const GetBoardByIdSchema = z.object({
         tasks: z
           .array(
             z.object({
-              taskId: z.string(),
+              taskId: z.number(),
               title: z.string(),
+              columnId: z.number(),
               subtasksCount: z.number(),
               subtasksCompleted: z.number(),
+              description: z.string().optional(),
+              subtasks: z.array(
+                z.object({
+                  id: z.number(),
+                  title: z.string(),
+                  isCompleted: z.boolean(),
+                }),
+              ),
             }),
           )
           .optional(),
@@ -25,9 +43,22 @@ const GetBoardByIdSchema = z.object({
 export type BoardById = z.infer<typeof GetBoardByIdSchema>;
 
 export const AddNewTaskSchema = z.object({
-  title: z.string(),
+  title: z.string().min(3),
   description: z.string(),
-  columnId: z.number(),
+  columnId: z.number().min(1),
   subtasks: z.array(z.object({ title: z.string() })).optional(),
 });
 export type AddNewTask = z.infer<typeof AddNewTaskSchema>;
+
+export const UpdateTaskSchema = z.object({
+  title: z.string().min(3).optional(),
+  description: z.string().optional(),
+  columnId: z.number().min(1),
+  subtasks: z
+    .array(
+      z.object({ title: z.string(), isCompleted: z.boolean(), id: z.number() }),
+    )
+    .optional(),
+  taskId: z.number(),
+});
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>;

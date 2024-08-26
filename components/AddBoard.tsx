@@ -1,5 +1,3 @@
-import { BoardsTable } from "@/data/types.db";
-import { Board } from "@/stores/boardStore";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Input from "./Input";

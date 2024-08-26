@@ -1,50 +1,68 @@
 import React from "react";
 import TaskCheckbox from "./TaskCheckbox";
-import { Subtask, Task } from "@/stores/boardStore";
+import useBoardStore from "@/stores/boardStore";
 import Dropdown from "./Dropdown";
 import { Icons } from "./Icons";
 import Button from "./Button";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import {
+  BoardById,
+  UpdateTask,
+  UpdateTaskSchema,
+} from "@/data/types.BoardManager";
+import { Task } from "@/data/types.db";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AddNewTaskSchema } from "@/data/types.BoardManager";
+import { handleUpdateTask } from "@/app/(actions)/actions";
 
-type Props = {
-  task: Task;
-};
+// Extract the type for a single task
+type TaskType = NonNullable<
+  NonNullable<BoardById["columns"][number]>["tasks"]
+>[number];
 
-type TaskFormValues = {
-  subtasks: Subtask[];
-  status: string;
-};
+const TaskDetail = ({ task }: { task: TaskType }) => {
+  const { currentBoard } = useBoardStore();
 
-const TaskDetail = ({ task }: Props) => {
   const MoreIcon = Icons["elipsisVertical"];
 
-  const { control, handleSubmit, watch } = useForm<Task>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<UpdateTask>({
     defaultValues: {
       subtasks: task.subtasks,
-      status: task.status,
+      columnId: task.columnId,
+      title: task.title,
+      description: task.description,
+      taskId: task.taskId,
     },
+    resolver: zodResolver(UpdateTaskSchema),
   });
 
-  const onSubmit: SubmitHandler<TaskFormValues> = (data) => {
+  const onSubmit: SubmitHandler<UpdateTask> = async (data) => {
     const updatedTask = {
-      ...task,
+      ...data,
       subtasks: data.subtasks,
-      status: data.status,
+      columnId: data.columnId,
     };
-    // onUpdate(updatedTask); // Update the task and submit the form
-    console.log(data);
+    try {
+      await handleUpdateTask(updatedTask); // Update the task and submit the form
+    } catch (error) {}
   };
 
   // Automatically submit the form when values change
   React.useEffect(() => {
     const subscription = watch((values) => {
-      handleSubmit(onSubmit)();
+      handleSubmit(onSubmit)(); // Automatically submit when a change is detected
     });
     return () => subscription.unsubscribe();
   }, [watch, handleSubmit, onSubmit]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="rounded p-5 space-y-5">
+    <form className="rounded p-5 space-y-5">
       <div className="flex justify-between">
         <h2 className="text-headingL text-black-dark dark:text-gray-light">
           {task.title}
@@ -72,7 +90,7 @@ const TaskDetail = ({ task }: Props) => {
                   <TaskCheckbox
                     onChange={(checked) => field.onChange(checked)}
                     task={d.title}
-                    checked={field.value}
+                    checked={watch(`subtasks.${i}.isCompleted`)}
                   />
                 )}
               />
@@ -84,12 +102,17 @@ const TaskDetail = ({ task }: Props) => {
         <p className="text-bodyM text-gray-dark">Current Status</p>
         <Controller
           control={control}
-          name="status"
+          name="columnId"
           render={({ field }) => (
             <Dropdown
-              options={["To do", "Doing", "Done"]}
-              value={field.value}
-              onChange={(value) => field.onChange(value)}
+              onChange={(value) => {
+                setValue("columnId", Number(value));
+              }}
+              options={(currentBoard as BoardById).columns.map((col) => ({
+                label: col?.title as string,
+                value: col?.columnId as number,
+              }))}
+              value={watch("columnId")}
             />
           )}
         />
