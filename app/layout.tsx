@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import { getAllBoards } from "@/data/BoardManager";
+import Head from "next/head";
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -22,6 +23,23 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </Head>
       <body
         className={`${jakartaSans.className} bg-gray-light dark:bg-black-medium flex h-screen`}
       >

@@ -6,23 +6,46 @@ import { Icons } from "./Icons";
 
 type Props = {};
 
+/**
+ * TODO:
+ * 1 - save users past preference to local storage or cookie and priorotise it over the system setting.
+ *
+ */
+
+const getInitalTheme = () => {
+  if (typeof window !== "undefined") {
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
+    if (systemPrefersDark) {
+      return "dark";
+    }
+  }
+  return "light";
+};
+
 const ThemeToggle = (props: Props) => {
-  const [mode, setMode] = useState<"dark" | "light">("light");
+  const [mode, setMode] = useState<"dark" | "light">(() => getInitalTheme());
 
   useEffect(() => {
     // This runs only on the client, ensuring no server-side error
-    const initialMode = document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light";
-    setMode(initialMode);
-  }, []);
+    // Check if the user has a saved preference in localStorage
+  }, [setMode]);
+
+  useEffect(() => {
+    if (mode === "dark") {
+      const isDark = document.documentElement.classList.add("dark");
+    } else {
+      const isDark = document.documentElement.classList.remove("dark");
+    }
+  }, [mode, setMode]);
 
   const MoonIcon = Icons["moon"];
   const SunIcon = Icons["sun"];
 
   const handleChange = () => {
     setMode((mode) => (mode === "dark" ? "light" : "dark"));
-    const isDark = document.documentElement.classList.toggle("dark");
   };
 
   return (

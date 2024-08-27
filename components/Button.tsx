@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { Icons } from "./Icons";
 
 const buttonStyles = cva(
-  "rounded-full py-2 transition-all px-10 flex items-center gap-2 capitalize justify-center",
+  "rounded-full py-2 transition-all px-10 flex items-center gap-2 capitalize justify-center whitespace-nowrap",
   {
     variants: {
       intent: {
@@ -20,7 +20,7 @@ const buttonStyles = cva(
         true: "w-full",
       },
     },
-  }
+  },
 );
 
 type Props = {

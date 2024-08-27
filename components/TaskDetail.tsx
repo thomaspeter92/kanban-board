@@ -10,10 +10,10 @@ import {
   UpdateTask,
   UpdateTaskSchema,
 } from "@/data/types.BoardManager";
-import { Task } from "@/data/types.db";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddNewTaskSchema } from "@/data/types.BoardManager";
 import { handleUpdateTask } from "@/app/(actions)/actions";
+import { useState } from "react";
+import PopoverMenu from "./PopoverMenu";
 
 // Extract the type for a single task
 type TaskType = NonNullable<
@@ -22,6 +22,7 @@ type TaskType = NonNullable<
 
 const TaskDetail = ({ task }: { task: TaskType }) => {
   const { currentBoard } = useBoardStore();
+  const [isEditTask, setIsEditTask] = useState<boolean>(false);
 
   const MoreIcon = Icons["elipsisVertical"];
 
@@ -67,12 +68,7 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
         <h2 className="text-headingL text-black-dark dark:text-gray-light">
           {task.title}
         </h2>
-        <button
-          type="button"
-          className="text-gray-medium hover:text-gray-dark transition-all"
-        >
-          <MoreIcon />
-        </button>
+        <PopoverMenu />
       </div>
       <p className="text-bodyL text-gray-dark">{task.description}</p>
       <div className="space-y-3">

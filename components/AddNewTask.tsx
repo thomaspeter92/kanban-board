@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { handleSubmitNewTask } from "@/app/(actions)/actions";
 import useModalStore from "@/stores/modalStore";
 import ErrorMessage from "./ErrorMessage";
+import TextArea from "./TextArea";
 
 const AddNewTask = () => {
   const { currentBoard } = useBoardStore();
@@ -70,7 +71,7 @@ const AddNewTask = () => {
             required: true,
           })}
         />
-        <Input
+        <TextArea
           label="Description"
           {...register("description", { required: true })}
         />
