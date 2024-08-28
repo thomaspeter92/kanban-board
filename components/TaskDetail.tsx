@@ -4,7 +4,12 @@ import useBoardStore from "@/stores/boardStore";
 import Dropdown from "./Dropdown";
 import { Icons } from "./Icons";
 import Button from "./Button";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  Controller,
+  useFieldArray,
+} from "react-hook-form";
 import {
   BoardById,
   UpdateTask,
@@ -14,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { handleUpdateTask } from "@/app/(actions)/actions";
 import { useState } from "react";
 import PopoverMenu from "./PopoverMenu";
+import Input from "./Input";
+import TextArea from "./TextArea";
 
 // Extract the type for a single task
 type TaskType = NonNullable<
@@ -24,13 +31,14 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
   const { currentBoard } = useBoardStore();
   const [isEditTask, setIsEditTask] = useState<boolean>(false);
 
-  const MoreIcon = Icons["elipsisVertical"];
+  const RemoveIcon = Icons["close"];
 
   const {
     control,
     handleSubmit,
     watch,
     setValue,
+    register,
     formState: { errors },
   } = useForm<UpdateTask>({
     defaultValues: {
@@ -54,6 +62,15 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
     } catch (error) {}
   };
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "subtasks", // This corresponds to the subtasks array in Inputs
+  });
+
+  const addSubtask = () => {
+    append({ title: "" }); // Add a new empty subtask
+  };
+
   // Automatically submit the form when values change
   React.useEffect(() => {
     const subscription = watch((values) => {
@@ -62,13 +79,76 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
     return () => subscription.unsubscribe();
   }, [watch, handleSubmit, onSubmit]);
 
+  if (isEditTask) {
+    return (
+      <form className="rounded p-5 space-y-5">
+        <h2 className="text-headingL text-black-dark dark:text-gray-light">
+          Edit Task
+        </h2>
+        <Input
+          label="Title"
+          {...register("title", {
+            required: true,
+          })}
+        />
+        <TextArea
+          label="Description"
+          {...register("description", { required: true })}
+        />
+        <div className="space-y-2 overflow-y-auto">
+          <label className="text-bodyM text-gray-dark">Subtasks</label>
+          {fields.map((field, index) => (
+            <div key={field + field.id} className="flex gap-2 items-center">
+              <Input
+                {...register(`subtasks.${index}.title` as const, {
+                  required: true,
+                })}
+                defaultValue={field.title}
+                // Important to provide default value for proper initialization
+              />
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="text-gray-dark"
+              >
+                <RemoveIcon />
+              </button>
+            </div>
+          ))}
+          <Button
+            onClick={addSubtask}
+            fullWidth
+            intent="secondary"
+            icon="plus"
+            size="lg"
+            type="button"
+          >
+            Add New Subtask
+          </Button>
+        </div>
+      </form>
+    );
+  }
+
   return (
     <form className="rounded p-5 space-y-5">
       <div className="flex justify-between">
         <h2 className="text-headingL text-black-dark dark:text-gray-light">
           {task.title}
         </h2>
-        <PopoverMenu />
+        <PopoverMenu
+          items={[
+            {
+              label: "Edit Task",
+              onClick: () => setIsEditTask((isEditTask) => !isEditTask),
+            },
+            {
+              label: "Delete Task",
+              onClick: () => {},
+              intent: "destructive",
+            },
+          ]}
+        />
       </div>
       <p className="text-bodyL text-gray-dark">{task.description}</p>
       <div className="space-y-3">

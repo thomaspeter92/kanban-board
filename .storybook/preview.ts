@@ -1,25 +1,23 @@
 import type { Preview } from "@storybook/react";
-import "@/app/globals.css"; 
-import { withThemeByClassName } from '@storybook/addon-themes';
-
-
+import "@/app/globals.css";
+import { withThemeByClassName } from "@storybook/addon-themes";
 
 const preview: Preview = {
   decorators: [
     withThemeByClassName({
       themes: {
-        light: 'light',
-        dark: 'dark ',
+        light: "light",
+        dark: "dark ",
       },
-      defaultTheme: 'light',
+      defaultTheme: "light",
     }),
   ],
   parameters: {
     backgrounds: {
-      default: 'light',
+      default: "light",
       values: [
-        { name: 'light', value: '#F4F7FD' },
-        { name: 'dark', value: '#2B2C37' },
+        { name: "light", value: "#F4F7FD" },
+        { name: "dark", value: "#2B2C37" },
       ],
     },
     controls: {

@@ -1,6 +1,7 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import React from "react";
 import { Icons } from "./Icons";
+import { describe } from "node:test";
 
 type Props = {
   items: {
@@ -21,10 +22,16 @@ const PopoverMenu = ({ items }: Props) => {
         <PopoverPanel
           transition
           anchor="bottom"
-          className="bg-gray-light dark:bg-black-medium p-5 rounded-lg shadow-1"
+          className="bg-gray-light dark:bg-black-medium  rounded-lg shadow-1 flex flex-col items-start w-[200px]"
         >
           {items.map((d, i) => (
-            <div></div>
+            <button
+              onClick={d.onClick}
+              key={d.label + i}
+              className={`hover:text-purple-dark text-left w-full px-3 py-3 ${d.intent === "destructive" ? "text-red-dark" : "text-gray-dark"}`}
+            >
+              {d.label}
+            </button>
           ))}
         </PopoverPanel>
       </Popover>
