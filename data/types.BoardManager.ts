@@ -56,7 +56,11 @@ export const UpdateTaskSchema = z.object({
   columnId: z.number().min(1),
   subtasks: z
     .array(
-      z.object({ title: z.string(), isCompleted: z.boolean(), id: z.number() }),
+      z.object({
+        title: z.string(),
+        isCompleted: z.boolean().optional(),
+        id: z.number().optional(),
+      }),
     )
     .optional(),
   taskId: z.number(),

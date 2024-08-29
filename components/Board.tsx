@@ -66,7 +66,7 @@ const BoardEmpty = () => {
 const Board = ({ board }: { board: BoardById }) => {
   const { setCurrentBoard } = useBoardStore();
 
-  // When mounting this component, set the current board state for client components within the app to acess it.
+  // When mounting this component, set the current board state for client components within the app to access it.
   useEffect(() => {
     setCurrentBoard(board);
     // Clean up when user leaves the board page

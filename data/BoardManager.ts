@@ -24,6 +24,7 @@ export const getAllBoards = async (): Promise<any> => {
  */
 
 export const getBoardById = async (id: number): Promise<BoardById> => {
+  console.log("GET BOARD BY ID ***********");
   try {
     // First, fetch the board details
     const board = await db
@@ -52,10 +53,6 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
         "st.id as subtaskId",
         "st.title as subtaskTitle",
         "st.is_completed as isCompleted",
-        fn.count("st.id").as("subtasksCount"),
-        fn
-          .sum(sql`CASE WHEN st.is_completed THEN 1 ELSE 0 END`)
-          .as("subtasksCompleted"),
       ])
       .where("c.board_id", "=", id)
       .groupBy(["c.id", "t.id", "st.id"])
@@ -90,10 +87,11 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
           columnId: row.columnId,
           description: row.taskDescription,
           subtasks: [],
-          subtasksCount: row.subtasksCount,
-          subtasksCompleted: row.subtasksCompleted,
+          // subtasksCount: row.subtasksCount,
+          // subtasksCompleted: row.subtasksCompleted,
           createdAt: row.createdAt,
         };
+
         taskMap.set(row.taskId, task);
         columnMap.get(row.columnId).tasks.push(task);
       }
@@ -104,6 +102,13 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
           id: row.subtaskId,
           title: row.subtaskTitle,
           isCompleted: row.isCompleted,
+        });
+        taskMap.forEach((value, key) => {
+          value.subtasksCount = value.subtasks.length;
+          value.subtasksCompleted = value.subtasks.reduce(
+            (acc: any, curr: any) => (curr.isCompleted ? acc + 1 : acc),
+            0,
+          );
         });
       }
     });
@@ -171,14 +176,26 @@ export const updateTask = async (data: UpdateTask) => {
       if (data.subtasks && data.subtasks.length > 0) {
         // Iterate over each subtask and update them
         for (const subtask of data.subtasks) {
-          await trx
-            .updateTable("subtasks")
-            .set({
-              title: subtask.title,
-              is_completed: subtask.isCompleted,
-            })
-            .where("id", "=", subtask.id) // Assuming each subtask has a unique 'id'
-            .execute();
+          if (subtask.id) {
+            // existing subtask, update it
+            await trx
+              .updateTable("subtasks")
+              .set({
+                title: subtask.title,
+                is_completed: subtask.isCompleted,
+              })
+              .where("id", "=", subtask.id) // Assuming each subtask has a unique 'id'
+              .execute();
+          } else {
+            // new subtask, insert it
+            await trx
+              .insertInto("subtasks")
+              .values({
+                title: subtask.title,
+                task_id: data.taskId,
+              })
+              .execute();
+          }
         }
       }
       return taskUpdate;

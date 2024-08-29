@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import TaskCheckbox from "./TaskCheckbox";
 import useBoardStore from "@/stores/boardStore";
@@ -21,6 +23,7 @@ import { useState } from "react";
 import PopoverMenu from "./PopoverMenu";
 import Input from "./Input";
 import TextArea from "./TextArea";
+import useModalStore from "@/stores/modalStore";
 
 // Extract the type for a single task
 type TaskType = NonNullable<
@@ -29,6 +32,7 @@ type TaskType = NonNullable<
 
 const TaskDetail = ({ task }: { task: TaskType }) => {
   const { currentBoard } = useBoardStore();
+  const { toggleModal } = useModalStore();
   const [isEditTask, setIsEditTask] = useState<boolean>(false);
 
   const RemoveIcon = Icons["close"];
@@ -59,6 +63,8 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
     };
     try {
       await handleUpdateTask(updatedTask); // Update the task and submit the form
+      // Close the form
+      if (isEditTask) toggleModal(null);
     } catch (error) {}
   };
 
@@ -72,16 +78,17 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
   };
 
   // Automatically submit the form when values change
+  // Do not do this in edit mode. Edit should submit only on button press
   React.useEffect(() => {
     const subscription = watch((values) => {
-      handleSubmit(onSubmit)(); // Automatically submit when a change is detected
+      if (!isEditTask) handleSubmit(onSubmit)(); // Automatically submit when a change is detected
     });
     return () => subscription.unsubscribe();
-  }, [watch, handleSubmit, onSubmit]);
+  }, [watch, handleSubmit, onSubmit, isEditTask]);
 
   if (isEditTask) {
     return (
-      <form className="rounded p-5 space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="rounded p-5 space-y-5">
         <h2 className="text-headingL text-black-dark dark:text-gray-light">
           Edit Task
         </h2>
@@ -126,6 +133,22 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
             Add New Subtask
           </Button>
         </div>
+        <Dropdown
+          onChange={(value) => {
+            setValue("columnId", Number(value));
+          }}
+          options={(currentBoard as BoardById).columns.map((col) => ({
+            label: col?.title as string,
+            value: col?.columnId as number,
+          }))}
+          value={watch("columnId")}
+        />
+        <Button type="submit" fullWidth intent="primary" size="lg">
+          Update Task
+        </Button>
+        {/* {error ? (
+          <ErrorMessage message="Unable to add task. Please try again." />
+        ) : null} */}
       </form>
     );
   }
@@ -166,7 +189,7 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
                   <TaskCheckbox
                     onChange={(checked) => field.onChange(checked)}
                     task={d.title}
-                    checked={watch(`subtasks.${i}.isCompleted`)}
+                    checked={watch(`subtasks.${i}.isCompleted`) as boolean}
                   />
                 )}
               />

@@ -10,7 +10,7 @@ import { AddNewTask, UpdateTask } from "@/data/types.BoardManager";
 export const handleSubmitNewTask = async (params: AddNewTask) => {
   try {
     const res = await createNewTask(params);
-    revalidatePath("/board");
+    revalidatePath("/boards/[id]");
     return res;
   } catch (error) {
     throw error;
@@ -20,8 +20,8 @@ export const handleSubmitNewTask = async (params: AddNewTask) => {
 export const handleUpdateTask = async (params: UpdateTask) => {
   try {
     const res = await updateTask(params);
-    console.log(params);
-    revalidatePath("/board");
+    revalidatePath("/boards/[id]");
+    return res;
   } catch (error) {
     throw error;
   }
