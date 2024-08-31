@@ -1,6 +1,8 @@
 import { sql } from "kysely";
 import db from "./db";
 import {
+  AddNewBoard,
+  AddNewBoardSchema,
   AddNewTask,
   AddNewTaskSchema,
   BoardById,
@@ -173,6 +175,37 @@ export const updateTask = async (data: UpdateTask) => {
         .where("id", "=", data.taskId)
         .executeTakeFirst();
 
+      if (data.subtasks) {
+        // Fetch existing subtasks from the database
+        const existingSubtasks = await trx
+          .selectFrom("subtasks")
+          .select(["id"])
+          .where("task_id", "=", data.taskId)
+          .execute();
+
+        const existingSubtaskIds = new Set(
+          existingSubtasks.map((sub) => sub.id),
+        );
+
+        // Determine the subtasks to keep and to add
+        const submittedSubtaskIds = new Set(
+          data?.subtasks.map((sub) => sub.id),
+        );
+
+        // Find subtasks to delete
+        const subtasksToDelete = [...existingSubtaskIds].filter(
+          (id) => !submittedSubtaskIds.has(id),
+        );
+
+        // Delete subtasks that are not in the submitted form
+        if (subtasksToDelete.length > 0) {
+          await trx
+            .deleteFrom("subtasks")
+            .where("id", "in", subtasksToDelete)
+            .execute();
+        }
+      }
+
       if (data.subtasks && data.subtasks.length > 0) {
         // Iterate over each subtask and update them
         for (const subtask of data.subtasks) {
@@ -200,6 +233,64 @@ export const updateTask = async (data: UpdateTask) => {
       }
       return taskUpdate;
     });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteTask = async (taskId: number) => {
+  try {
+    // Cascade will delete the corresponding rows in subtasks table
+    const result = await db
+      .deleteFrom("tasks")
+      .where("id", "=", taskId)
+      .executeTakeFirst();
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const addNewBoard = async (data: AddNewBoard) => {
+  try {
+    // First validate the data
+    AddNewBoardSchema.parse(data);
+
+    // start a new transaction (will be posting into boards & columns)
+    const result = await db.transaction().execute(async (trx) => {
+      const boardResult = await trx
+        .insertInto("boards")
+        .returning("boards.id")
+        .values({ title: data.title })
+        .executeTakeFirst();
+
+      // Insert each column into the columns table
+      // First format them into object with the board id
+      if (data.columns && data.columns.length > 0 && boardResult?.id) {
+        const columnsInsert = data.columns.map((column) => ({
+          board_id: boardResult.id,
+          title: column.title,
+        }));
+        await trx.insertInto("columns").values(columnsInsert).execute();
+      }
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteBoard = async (boardId: number) => {
+  try {
+    // Cascade will delete the corresponding rows in columns,tasks,subtasks table
+    const result = await db
+      .deleteFrom("boards")
+      .where("id", "=", boardId)
+      .executeTakeFirst();
 
     return result;
   } catch (error) {

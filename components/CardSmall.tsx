@@ -16,7 +16,6 @@ const CardSmall = ({
   subtasksCompleted,
   onClick,
 }: Props) => {
-  console.log(subtasksCount);
   return (
     <div
       onClick={onClick}

@@ -18,7 +18,7 @@ import {
   UpdateTaskSchema,
 } from "@/data/types.BoardManager";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { handleUpdateTask } from "@/app/(actions)/actions";
+import { handleDeleteTask, handleUpdateTask } from "@/app/(actions)/actions";
 import { useState } from "react";
 import PopoverMenu from "./PopoverMenu";
 import Input from "./Input";
@@ -36,6 +36,16 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
   const [isEditTask, setIsEditTask] = useState<boolean>(false);
 
   const RemoveIcon = Icons["close"];
+
+  const handleClickDeleteTask = async () => {
+    try {
+      await handleDeleteTask(task.taskId);
+      console.log("TOGGLE MODAL");
+      toggleModal(null);
+    } catch (error) {
+      // handle error
+    }
+  };
 
   const {
     control,
@@ -167,7 +177,7 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
             },
             {
               label: "Delete Task",
-              onClick: () => {},
+              onClick: handleClickDeleteTask,
               intent: "destructive",
             },
           ]}

@@ -66,3 +66,9 @@ export const UpdateTaskSchema = z.object({
   taskId: z.number(),
 });
 export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
+
+export const AddNewBoardSchema = z.object({
+  title: z.string().min(3),
+  columns: z.array(z.object({ title: z.string().min(3) })),
+});
+export type AddNewBoard = z.infer<typeof AddNewBoardSchema>;

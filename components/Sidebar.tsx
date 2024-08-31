@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Icons } from "./Icons";
 import Image from "next/image";
 import { images } from "@/util/images";
@@ -10,6 +10,10 @@ import useBoardStore from "@/stores/boardStore";
 import Link from "next/link";
 import { routes } from "@/util/routes";
 import { GetAllBoards } from "@/data/types.BoardManager";
+import useModalStore from "@/stores/modalStore";
+import AddBoard from "./AddBoard";
+import { Transition, TransitionChild } from "@headlessui/react";
+import { EyeIcon } from "lucide-react";
 
 const SidbarMenuItem = ({
   title,
@@ -35,9 +39,18 @@ const SidbarMenuItem = ({
 };
 
 const NewBoardButton = () => {
+  const { toggleModal } = useModalStore();
   const PlusIcon = Icons["plus"];
+
+  const openAddNewBoard = () => {
+    toggleModal(<AddBoard />);
+  };
+
   return (
-    <button className="flex items-center gap-3 text-headingM text-gray-dark px-5 py-5 hover:text-purple-dark">
+    <button
+      onClick={openAddNewBoard}
+      className="flex items-center gap-3 text-headingM text-gray-dark px-5 py-5 hover:text-purple-dark"
+    >
       <PlusIcon size={20} strokeWidth={2.5} />
       Create New Board
     </button>
@@ -49,44 +62,70 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ boards }: SidebarProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const HideIcon = Icons["hide"];
 
-  return (
-    <aside className="bg-white dark:bg-black-light w-[260px] py-10 h-screen flex flex-col border-r border-gray-medium dark:border-gray-dark/25">
-      {/* Hide on dark mode */}
-      <Image
-        className="px-5 mb-10 dark:hidden"
-        width={152}
-        height={25}
-        src={images.logoLight}
-        alt="Kanban Logo"
-      />
-      {/* Hide on light mode */}
-      <Image
-        className="px-5 mb-10 hidden dark:block"
-        width={152}
-        height={25}
-        src={images.logoDark}
-        alt="Kanban Logo"
-      />
-      <p className="text-headingS uppercase text-gray-dark px-5 mb-3">
-        All Boards
-      </p>
-      <ul className="flex-1">
-        {boards?.map((d, i) => {
-          return <SidbarMenuItem key={d.id} title={d.title} id={d.id} />;
-        })}
-        <NewBoardButton />
-      </ul>
+  const toggleSidebar = () => {
+    setSidebarOpen((sidebarOpen) => !sidebarOpen);
+  };
 
-      <div className="px-5 space-y-5">
-        <ThemeToggle />
-        <button className="text-headingM text-gray-dark flex gap-3">
-          <HideIcon size={20} />
-          Hide Sidebar
+  return (
+    <>
+      <Transition show={sidebarOpen}>
+        <aside className="duration-300 data-[closed]:w-0 bg-white dark:bg-black-light w-[260px] py-10 h-screen border-r border-gray-medium dark:border-gray-dark/25">
+          <TransitionChild>
+            {/* Hide on dark mode */}
+            <div className="flex flex-col h-full data-[closed]:-translate-x-full">
+              <Image
+                className="px-5 mb-10 dark:hidden"
+                width={152}
+                height={25}
+                src={images.logoLight}
+                alt="Kanban Logo"
+              />
+              {/* Hide on light mode */}
+              <Image
+                className="px-5 mb-10 hidden dark:block"
+                width={152}
+                height={25}
+                src={images.logoDark}
+                alt="Kanban Logo"
+              />
+              <p className="text-headingS uppercase text-gray-dark px-5 mb-3">
+                All Boards
+              </p>
+              <ul className="flex-1">
+                {boards?.map((d, i) => {
+                  return (
+                    <SidbarMenuItem key={d.id} title={d.title} id={d.id} />
+                  );
+                })}
+                <NewBoardButton />
+              </ul>
+
+              <div className="px-5 space-y-5">
+                <ThemeToggle />
+                <button
+                  onClick={toggleSidebar}
+                  className="text-headingM text-gray-dark flex gap-3"
+                >
+                  <HideIcon size={20} />
+                  Hide Sidebar
+                </button>
+              </div>
+            </div>
+          </TransitionChild>
+        </aside>
+      </Transition>
+      {!sidebarOpen ? (
+        <button
+          onClick={toggleSidebar}
+          className="rounded-r-full bg-purple-dark p-3 h-fit w-fit fixed left-0 bottom-5 z-10"
+        >
+          <EyeIcon className="text-white" />
         </button>
-      </div>
-    </aside>
+      ) : null}
+    </>
   );
 };
 

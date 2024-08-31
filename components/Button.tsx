@@ -19,6 +19,9 @@ const buttonStyles = cva(
       fullWidth: {
         true: "w-full",
       },
+      minimize: {
+        true: "px-4",
+      },
     },
   },
 );
@@ -29,7 +32,7 @@ type Props = {
   onClick?: (args: any) => void;
   type?: "button" | "submit";
 };
-
+// Minimise will reduce the button to an icon only on mobile devices
 const Button = ({
   children,
   intent,
@@ -38,16 +41,19 @@ const Button = ({
   type,
   fullWidth,
   onClick,
+  minimize,
 }: Props & VariantProps<typeof buttonStyles>) => {
   const Icon = Icons[icon ? icon : "heart"];
   return (
     <button
       type={type}
       onClick={onClick}
-      className={buttonStyles({ intent, size, fullWidth })}
+      className={buttonStyles({ intent, size, fullWidth, minimize })}
     >
       {icon ? <Icon size={15} strokeWidth={3} /> : null}
-      {children}
+      <span className={minimize && icon ? "hidden sm:inline" : ""}>
+        {children}
+      </span>
     </button>
   );
 };

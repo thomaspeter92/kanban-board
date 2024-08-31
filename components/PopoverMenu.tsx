@@ -16,13 +16,13 @@ const PopoverMenu = ({ items }: Props) => {
   return (
     <div className="relative">
       <Popover>
-        <PopoverButton className="text-gray-medium hover:text-gray-dark transition-all">
+        <PopoverButton className="text-gray-medium hover:text-gray-dark transition-all flex items-center">
           <ButtonIcon />
         </PopoverButton>
         <PopoverPanel
           transition
-          anchor="bottom"
-          className="bg-gray-light dark:bg-black-medium  rounded-lg shadow-1 flex flex-col items-start w-[200px]"
+          anchor="bottom end"
+          className="bg-gray-light dark:bg-black-medium mr-5 rounded-lg shadow-1 flex flex-col items-start w-[200px]"
         >
           {items.map((d, i) => (
             <button

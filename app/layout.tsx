@@ -22,24 +22,24 @@ export default async function RootLayout({
   const boards = await getAllBoards();
 
   return (
-    <html lang="en">
-      <Head>
+    <html lang="en" className="dark">
+      <head>
         <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                const savedTheme = localStorage.getItem('theme');
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-                  document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
-                }
-              })();
-            `,
-          }}
+        // dangerouslySetInnerHTML={{
+        //   __html: `
+        //     (function() {
+        //       const savedTheme = localStorage.getItem('theme');
+        //       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        //       if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        //         document.documentElement.classList.add('dark');
+        //       } else {
+        //         document.documentElement.classList.remove('dark');
+        //       }
+        //     })();
+        //   `,
+        // }}
         />
-      </Head>
+      </head>
       <body
         className={`${jakartaSans.className} bg-gray-light dark:bg-black-medium flex h-screen`}
       >
