@@ -23,29 +23,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <head>
-        <script
-        // dangerouslySetInnerHTML={{
-        //   __html: `
-        //     (function() {
-        //       const savedTheme = localStorage.getItem('theme');
-        //       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        //       if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        //         document.documentElement.classList.add('dark');
-        //       } else {
-        //         document.documentElement.classList.remove('dark');
-        //       }
-        //     })();
-        //   `,
-        // }}
-        />
-      </head>
       <body
         className={`${jakartaSans.className} bg-gray-light dark:bg-black-medium flex h-screen`}
       >
         <Sidebar boards={boards ? boards : []} />
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <Nav />
+          <Nav boards={boards ? boards : []} />
           <main className="flex-1 p-5 overflow-hidden">{children}</main>
         </div>
         <Modal />

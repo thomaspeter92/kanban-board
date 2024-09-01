@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icons } from "./Icons";
 import Image from "next/image";
 import { images } from "@/util/images";
@@ -14,8 +14,9 @@ import useModalStore from "@/stores/modalStore";
 import AddBoard from "./AddBoard";
 import { Transition, TransitionChild } from "@headlessui/react";
 import { EyeIcon } from "lucide-react";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
-const SidbarMenuItem = ({
+export const SidebarMenuItem = ({
   title,
   active,
   id,
@@ -30,7 +31,7 @@ const SidbarMenuItem = ({
   return (
     <Link
       href={routes.boards + id}
-      className="py-5 cursor-pointer flex text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all"
+      className="py-5 cursor-pointer flex  font-semibold md:text-headingM gap-3 text-gray-dark px-5 hover:bg-purple-dark hover:text-white mr-5 rounded-r-full transition-all"
     >
       <BoardIcon size={20} strokeWidth={2.5} />
       {title}
@@ -38,7 +39,7 @@ const SidbarMenuItem = ({
   );
 };
 
-const NewBoardButton = () => {
+export const NewBoardButton = () => {
   const { toggleModal } = useModalStore();
   const PlusIcon = Icons["plus"];
 
@@ -64,18 +65,25 @@ type SidebarProps = {
 const Sidebar = ({ boards }: SidebarProps) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const HideIcon = Icons["hide"];
+  const breakpoint = useBreakpoint();
 
   const toggleSidebar = () => {
     setSidebarOpen((sidebarOpen) => !sidebarOpen);
   };
 
+  useEffect(() => {
+    if (breakpoint === "sm") {
+      setSidebarOpen(false);
+    }
+  }, [breakpoint, sidebarOpen, setSidebarOpen]);
+
   return (
     <>
       <Transition show={sidebarOpen}>
-        <aside className="duration-300 data-[closed]:w-0 bg-white dark:bg-black-light w-[260px] py-10 h-screen border-r border-gray-medium dark:border-gray-dark/25">
+        <aside className="data-[enter]:w-[260px] duration-300 data-[closed]:w-0 bg-white dark:bg-black-light w-[260px] py-10 h-screen border-r border-gray-medium dark:border-gray-dark/25">
           <TransitionChild>
             {/* Hide on dark mode */}
-            <div className="flex flex-col h-full data-[closed]:-translate-x-full">
+            <div className="flex flex-col h-full ">
               <Image
                 className="px-5 mb-10 dark:hidden"
                 width={152}
@@ -97,7 +105,7 @@ const Sidebar = ({ boards }: SidebarProps) => {
               <ul className="flex-1">
                 {boards?.map((d, i) => {
                   return (
-                    <SidbarMenuItem key={d.id} title={d.title} id={d.id} />
+                    <SidebarMenuItem key={d.id} title={d.title} id={d.id} />
                   );
                 })}
                 <NewBoardButton />
@@ -120,7 +128,7 @@ const Sidebar = ({ boards }: SidebarProps) => {
       {!sidebarOpen ? (
         <button
           onClick={toggleSidebar}
-          className="rounded-r-full bg-purple-dark p-3 h-fit w-fit fixed left-0 bottom-5 z-10"
+          className="hidden md:block rounded-r-full bg-purple-dark p-3 h-fit w-fit fixed left-0 bottom-5 z-10"
         >
           <EyeIcon className="text-white" />
         </button>

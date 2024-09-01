@@ -1,5 +1,4 @@
 import { Pool, types } from "pg";
-// import { Tables } from "@/types/supabase";
 import { PostgresDialect, Kysely } from "kysely";
 import { Database } from "./types.db";
 

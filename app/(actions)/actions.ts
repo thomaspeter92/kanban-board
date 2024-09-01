@@ -2,13 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import {
-  addNewBoard,
+  addBoard,
   createNewTask,
   deleteBoard,
   deleteTask,
+  editBoard,
   updateTask,
 } from "@/data/BoardManager";
-import { AddNewBoard, AddNewTask, UpdateTask } from "@/data/types.BoardManager";
+import {
+  AddEditBoard,
+  AddNewTask,
+  UpdateTask,
+} from "@/data/types.BoardManager";
 import { redirect } from "next/navigation";
 
 /**
@@ -44,9 +49,9 @@ export const handleDeleteTask = async (taskId: number) => {
   }
 };
 
-export const handleAddBoard = async (params: AddNewBoard) => {
+export const handleAddBoard = async (params: AddEditBoard) => {
   try {
-    const res = await addNewBoard(params);
+    const res = await addBoard(params);
     revalidatePath("/");
     return;
   } catch (error) {
@@ -59,6 +64,15 @@ export const handleDeleteBoard = async (boardId: number) => {
     await deleteBoard(boardId);
     revalidatePath("/");
     redirect("/");
+  } catch (error) {
+    throw error;
+  }
+};
+export const handleEditBoard = async (data: AddEditBoard) => {
+  try {
+    let result = await editBoard(data);
+    revalidatePath("/");
+    return result;
   } catch (error) {
     throw error;
   }

@@ -1,17 +1,18 @@
 import React from "react";
-import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
-import Input from "./Input";
-import { AddEditBoard, AddEditBoardSchema } from "@/data/types.BoardManager";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Icons } from "./Icons";
-import Button from "./Button";
-import { handleAddBoard } from "@/app/(actions)/actions";
 import useModalStore from "@/stores/modalStore";
-
+import { Icons } from "./Icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { AddEditBoard, AddEditBoardSchema } from "@/data/types.BoardManager";
+import Input from "./Input";
+import Button from "./Button";
+import useBoardStore from "@/stores/boardStore";
+import { handleEditBoard } from "@/app/(actions)/actions";
 type Props = {};
 
-const AddBoard = (props: Props) => {
+const EditBoard = (props: Props) => {
   const { toggleModal } = useModalStore();
+  const { currentBoard } = useBoardStore();
   const RemoveIcon = Icons["close"];
   const {
     register,
@@ -19,10 +20,13 @@ const AddBoard = (props: Props) => {
     control,
     formState: { errors },
   } = useForm<AddEditBoard>({
-    defaultValues: { title: "" },
+    defaultValues: {
+      title: currentBoard?.title,
+      boardId: currentBoard?.boardId,
+      columns: currentBoard?.columns,
+    },
     resolver: zodResolver(AddEditBoardSchema),
   });
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: "columns", // This corresponds to the subtasks array in Inputs
@@ -30,7 +34,7 @@ const AddBoard = (props: Props) => {
 
   const onSubmit: SubmitHandler<AddEditBoard> = async (data) => {
     try {
-      await handleAddBoard(data);
+      await handleEditBoard(data);
       toggleModal(null);
     } catch (error) {
       console.log(error);
@@ -39,21 +43,20 @@ const AddBoard = (props: Props) => {
   const addColumn = () => {
     append({ title: "" }); // Add a new empty subtask
   };
-
   return (
     <form className="rounded p-5 space-y-5" onSubmit={handleSubmit(onSubmit)}>
       <h2 className="text-headingL text-black-dark dark:text-gray-light">
-        Add New Board
+        Edit Board
       </h2>
       <Input
         label="Name"
         placeholder="e.g. Web Design"
-        {...(register("title"), { required: true })}
+        {...register("title")}
       />
       <div className="space-y-2 overflow-y-auto">
         <label className="text-bodyM text-gray-dark">Columns</label>
         {fields.map((field, index) => (
-          <div key={field.id} className="flex gap-2 items-center">
+          <div key={field + field.id} className="flex gap-2 items-center">
             <Input
               {...register(`columns.${index}.title` as const, {
                 required: true,
@@ -78,14 +81,14 @@ const AddBoard = (props: Props) => {
           size="lg"
           type="button"
         >
-          Add New Subtask
+          Add New Column
         </Button>
       </div>
-      <Button fullWidth size={"lg"} type="submit" intent={"primary"}>
-        Add Board
+      <Button fullWidth intent="primary" icon="plus" size="lg" type="submit">
+        Save Changes
       </Button>
     </form>
   );
 };
 
-export default AddBoard;
+export default EditBoard;

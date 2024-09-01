@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { z } from "zod";
 
 const GetAllBoardsSchema = z.array(
@@ -67,8 +68,11 @@ export const UpdateTaskSchema = z.object({
 });
 export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 
-export const AddNewBoardSchema = z.object({
+export const AddEditBoardSchema = z.object({
+  boardId: z.number().optional(),
   title: z.string().min(3),
-  columns: z.array(z.object({ title: z.string().min(3) })),
+  columns: z.array(
+    z.object({ title: z.string().min(3), columnId: z.number().optional() }),
+  ),
 });
-export type AddNewBoard = z.infer<typeof AddNewBoardSchema>;
+export type AddEditBoard = z.infer<typeof AddEditBoardSchema>;

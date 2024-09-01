@@ -1,8 +1,7 @@
-import { sql } from "kysely";
 import db from "./db";
 import {
-  AddNewBoard,
-  AddNewBoardSchema,
+  AddEditBoard,
+  AddEditBoardSchema,
   AddNewTask,
   AddNewTaskSchema,
   BoardById,
@@ -15,18 +14,11 @@ import ErrorReponse from "@/util/ErrorReponse";
 export const getAllBoards = async (): Promise<any> => {
   try {
     const rows = await db.selectFrom("boards").selectAll().execute();
-    console.log(rows);
     return rows;
   } catch {}
 };
 
-/**
- *
- *
- */
-
 export const getBoardById = async (id: number): Promise<BoardById> => {
-  console.log("GET BOARD BY ID ***********");
   try {
     // First, fetch the board details
     const board = await db
@@ -64,7 +56,7 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
 
     //Formatting the result for the response.
     const result: BoardById = {
-      boardId: id,
+      boardId: board.boardId,
       title: board.boardTitle,
       columns: [],
     };
@@ -254,10 +246,10 @@ export const deleteTask = async (taskId: number) => {
   }
 };
 
-export const addNewBoard = async (data: AddNewBoard) => {
+export const addBoard = async (data: AddEditBoard) => {
   try {
     // First validate the data
-    AddNewBoardSchema.parse(data);
+    AddEditBoardSchema.parse(data);
 
     // start a new transaction (will be posting into boards & columns)
     const result = await db.transaction().execute(async (trx) => {
@@ -293,6 +285,87 @@ export const deleteBoard = async (boardId: number) => {
       .executeTakeFirst();
 
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const editBoard = async (data: AddEditBoard) => {
+  try {
+    // Maybe better to make new schemas for everything rather than reusing?
+    AddEditBoardSchema.parse(data);
+    if (data.boardId) {
+      const result = await db.transaction().execute(async (trx) => {
+        await trx
+          .updateTable("boards")
+          .returning("boards.id")
+          .set({
+            title: data.title,
+          })
+          .where("id", "=", data.boardId as number)
+          .executeTakeFirst();
+
+        if (data.columns) {
+          // Fetch existing columns from the database
+          const existingColumns = await trx
+            .selectFrom("columns")
+            .select(["id"])
+            .where("board_id", "=", data.boardId as number)
+            .execute();
+
+          const existingColumnIds = new Set(
+            existingColumns.map((col) => col.id),
+          );
+
+          // Determine the columns to keep and to add
+          const submittedColumnIds = new Set(
+            data?.columns.map((col) => col.columnId),
+          );
+
+          // Find columns to delete
+          const columnsToDelete = [...existingColumnIds].filter(
+            (id) => !submittedColumnIds.has(id),
+          );
+
+          // Delete columns that are not in the submitted form
+          if (columnsToDelete.length > 0) {
+            await trx
+              .deleteFrom("columns")
+              .where("id", "in", columnsToDelete)
+              .execute();
+          }
+        }
+
+        // Now insert newly added columns or update edited column names
+        if (data.columns && data.columns.length > 0) {
+          // Iterate over each column and update them
+          for (const column of data.columns) {
+            if (column.columnId) {
+              // existing column, update it
+              await trx
+                .updateTable("columns")
+                .set({
+                  title: column.title,
+                })
+                .where("id", "=", column.columnId)
+                .execute();
+            } else {
+              // new column, insert it
+              await trx
+                .insertInto("columns")
+                .values({
+                  title: column.title,
+                  board_id: data.boardId as number,
+                })
+                .execute();
+            }
+          }
+        }
+      });
+      return result;
+    } else {
+      throw new Error("no board id");
+    }
   } catch (error) {
     throw error;
   }

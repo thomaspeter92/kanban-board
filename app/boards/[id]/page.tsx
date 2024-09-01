@@ -7,7 +7,7 @@ import React from "react";
 
 const Page = async ({ params }: { params: { id: number } }) => {
   const board: BoardById = await getBoardById(params.id);
-
+  console.log(board);
   return <Board board={board} />;
 };
 
