@@ -16,7 +16,7 @@ const PopoverMenu = ({ items }: Props) => {
   return (
     <div className="relative">
       <Popover>
-        <PopoverButton className="text-gray-medium hover:text-gray-dark transition-all flex items-center">
+        <PopoverButton className="text-gray-dark hover:text-gray-dark transition-all flex items-center">
           <ButtonIcon />
         </PopoverButton>
         <PopoverPanel

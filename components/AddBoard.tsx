@@ -40,6 +40,8 @@ const AddBoard = (props: Props) => {
     append({ title: "" }); // Add a new empty subtask
   };
 
+  console.log(errors);
+
   return (
     <form className="rounded p-5 space-y-5" onSubmit={handleSubmit(onSubmit)}>
       <h2 className="text-headingL text-black-dark dark:text-gray-light">
@@ -48,7 +50,7 @@ const AddBoard = (props: Props) => {
       <Input
         label="Name"
         placeholder="e.g. Web Design"
-        {...(register("title"), { required: true })}
+        {...register("title")}
       />
       <div className="space-y-2 overflow-y-auto">
         <label className="text-bodyM text-gray-dark">Columns</label>
