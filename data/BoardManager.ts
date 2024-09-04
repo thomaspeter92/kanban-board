@@ -1,3 +1,4 @@
+import { timeout } from "@/util/helpers";
 import db from "./db";
 import {
   AddEditBoard,
@@ -108,6 +109,8 @@ export const getBoardById = async (id: number): Promise<BoardById> => {
     });
 
     result["columns"] = Array.from(columnMap.values());
+
+    // await timeout(10000);
 
     return result;
   } catch (error) {
