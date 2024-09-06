@@ -8,10 +8,10 @@ types.setTypeParser(1700, (val) => parseFloat(val)); // 1700 is the OID for NUME
 
 const dialect = new PostgresDialect({
   pool: new Pool({
-    user: "postgres.agnyplfsaxnjpwfvooyi",
-    host: "aws-0-ap-northeast-2.pooler.supabase.com",
+    host: "aws-0-us-east-1.pooler.supabase.com",
+    user: "postgres.ykqnvorurarmqcsfuxei",
     database: "postgres",
-    password: "SDFsR_PL.kD5TTt",
+    password: "postgres.ykqnvorurarmqcsfuxei",
     port: 6543,
   }),
 });
