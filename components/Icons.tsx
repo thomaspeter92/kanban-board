@@ -15,6 +15,7 @@ import {
   Sun,
   Moon,
   LayoutDashboard,
+  LoaderCircle,
   Plus,
   EyeOff,
   EllipsisVertical,
@@ -43,4 +44,5 @@ export const Icons = {
   hide: EyeOff,
   elipsisVertical: EllipsisVertical,
   close: X,
+  loading: LoaderCircle,
 };

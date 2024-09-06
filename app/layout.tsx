@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import { getAllBoards } from "@/data/BoardManager";
 import Head from "next/head";
+import { redirect } from "next/navigation";
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 

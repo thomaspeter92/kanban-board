@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useModalStore from "@/stores/modalStore";
 import { Icons } from "./Icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ type Props = {};
 const EditBoard = (props: Props) => {
   const { toggleModal } = useModalStore();
   const { currentBoard } = useBoardStore();
+  const [loading, setLoading] = useState(false);
   const RemoveIcon = Icons["close"];
   const {
     register,
@@ -34,10 +35,13 @@ const EditBoard = (props: Props) => {
 
   const onSubmit: SubmitHandler<AddEditBoard> = async (data) => {
     try {
+      setLoading(true);
       await handleEditBoard(data);
       toggleModal(null);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
   const addColumn = () => {
@@ -84,7 +88,14 @@ const EditBoard = (props: Props) => {
           Add New Column
         </Button>
       </div>
-      <Button fullWidth intent="primary" icon="plus" size="lg" type="submit">
+      <Button
+        loading={loading}
+        fullWidth
+        intent="primary"
+        icon="plus"
+        size="lg"
+        type="submit"
+      >
         Save Changes
       </Button>
     </form>

@@ -9,6 +9,7 @@ import React from "react";
 import { Icons } from "./Icons";
 import { GetAllBoards } from "@/data/types.BoardManager";
 import { SidebarMenuItem, NewBoardButton } from "./Sidebar";
+import ThemeToggle from "./ThemeToggle";
 
 const MobileMenu = ({ boards }: { boards: GetAllBoards }) => {
   const { currentBoard } = useBoardStore();
@@ -31,6 +32,9 @@ const MobileMenu = ({ boards }: { boards: GetAllBoards }) => {
           })}
           <NewBoardButton />
         </ul>
+        <div className="px-3">
+          <ThemeToggle />
+        </div>
       </PopoverPanel>
     </Popover>
   );

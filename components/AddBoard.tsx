@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import Input from "./Input";
 import { AddEditBoard, AddEditBoardSchema } from "@/data/types.BoardManager";
@@ -12,6 +12,7 @@ type Props = {};
 
 const AddBoard = (props: Props) => {
   const { toggleModal } = useModalStore();
+  const [loading, setLoading] = useState(false);
   const RemoveIcon = Icons["close"];
   const {
     register,
@@ -30,10 +31,13 @@ const AddBoard = (props: Props) => {
 
   const onSubmit: SubmitHandler<AddEditBoard> = async (data) => {
     try {
+      setLoading(true);
       await handleAddBoard(data);
       toggleModal(null);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
   const addColumn = () => {
@@ -83,7 +87,13 @@ const AddBoard = (props: Props) => {
           Add New Subtask
         </Button>
       </div>
-      <Button fullWidth size={"lg"} type="submit" intent={"primary"}>
+      <Button
+        loading={loading}
+        fullWidth
+        size={"lg"}
+        type="submit"
+        intent={"primary"}
+      >
         Add Board
       </Button>
     </form>

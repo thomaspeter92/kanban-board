@@ -21,6 +21,7 @@ const AddNewTask = () => {
   const { currentBoard } = useBoardStore();
   const [error, setError] = useState<boolean>();
   const { toggleModal } = useModalStore();
+  const [loading, setLoading] = useState(false);
 
   const RemoveIcon = Icons["close"];
 
@@ -43,12 +44,14 @@ const AddNewTask = () => {
 
   const onSubmit: SubmitHandler<AddNewTaskType> = async (values) => {
     try {
+      setLoading(true);
       const res = await handleSubmitNewTask(values);
-      console.log(res);
       // close the modal
       toggleModal(null);
+      setLoading(false);
     } catch (error) {
       setError(true);
+      setLoading(false);
     }
   };
 
@@ -117,7 +120,14 @@ const AddNewTask = () => {
           value={watch("columnId")}
         />
 
-        <Button type="submit" fullWidth intent="primary" icon="plus" size="lg">
+        <Button
+          loading={loading}
+          type="submit"
+          fullWidth
+          intent="primary"
+          icon="plus"
+          size="lg"
+        >
           Create Task
         </Button>
         {error ? (

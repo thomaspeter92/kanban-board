@@ -34,6 +34,7 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
   const { currentBoard } = useBoardStore();
   const { toggleModal } = useModalStore();
   const [isEditTask, setIsEditTask] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const RemoveIcon = Icons["close"];
 
@@ -72,10 +73,14 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
       columnId: data.columnId,
     };
     try {
+      setLoading(true);
       await handleUpdateTask(updatedTask); // Update the task and submit the form
       // Close the form
       if (isEditTask) toggleModal(null);
-    } catch (error) {}
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const { fields, append, remove } = useFieldArray({
@@ -153,7 +158,13 @@ const TaskDetail = ({ task }: { task: TaskType }) => {
           }))}
           value={watch("columnId")}
         />
-        <Button type="submit" fullWidth intent="primary" size="lg">
+        <Button
+          loading={loading}
+          type="submit"
+          fullWidth
+          intent="primary"
+          size="lg"
+        >
           Update Task
         </Button>
         {/* {error ? (

@@ -31,6 +31,7 @@ type Props = {
   icon?: keyof typeof Icons;
   onClick?: (args: any) => void;
   type?: "button" | "submit";
+  loading?: boolean;
 };
 // Minimise will reduce the button to an icon only on mobile devices
 const Button = ({
@@ -42,15 +43,22 @@ const Button = ({
   fullWidth,
   onClick,
   minimize,
+  loading,
 }: Props & VariantProps<typeof buttonStyles>) => {
   const Icon = Icons[icon ? icon : "heart"];
+  const LoadingIcon = Icons["loading"];
   return (
     <button
+      disabled={loading}
       type={type}
       onClick={onClick}
       className={buttonStyles({ intent, size, fullWidth, minimize })}
     >
-      {icon ? <Icon size={15} strokeWidth={3} /> : null}
+      {loading ? (
+        <LoadingIcon className="animate-spin" size={20} />
+      ) : icon ? (
+        <Icon size={15} strokeWidth={3} />
+      ) : null}
       <span className={minimize && icon ? "hidden sm:inline" : ""}>
         {children}
       </span>
