@@ -11,7 +11,7 @@ const GetAllBoardsSchema = z.array(
 export type GetAllBoards = z.infer<typeof GetAllBoardsSchema>;
 
 const GetBoardByIdSchema = z.object({
-  boardId: z.number(),
+  boardId: z.number().min(1),
   title: z.string(),
   columns: z.array(
     z
@@ -76,3 +76,9 @@ export const AddEditBoardSchema = z.object({
   ),
 });
 export type AddEditBoard = z.infer<typeof AddEditBoardSchema>;
+
+export const ChangeTaskColumnSchema = z.object({
+  taskId: z.number(),
+  columnId: z.number(),
+});
+export type ChangeTaskColumn = z.infer<typeof ChangeTaskColumnSchema>;

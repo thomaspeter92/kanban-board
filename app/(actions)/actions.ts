@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   addBoard,
+  changeTaskColumn,
   createNewTask,
   deleteBoard,
   deleteTask,
@@ -12,6 +13,7 @@ import {
 import {
   AddEditBoard,
   AddNewTask,
+  ChangeTaskColumn,
   UpdateTask,
 } from "@/data/types.BoardManager";
 import { redirect } from "next/navigation";
@@ -72,6 +74,16 @@ export const handleEditBoard = async (data: AddEditBoard) => {
   try {
     let result = await editBoard(data);
     revalidatePath("/");
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const handleChangeTaskColumn = async (data: ChangeTaskColumn) => {
+  try {
+    let result = changeTaskColumn(data);
+    revalidatePath("/boards/[id]");
     return result;
   } catch (error) {
     throw error;

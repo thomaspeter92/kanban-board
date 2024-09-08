@@ -6,6 +6,8 @@ import {
   AddNewTask,
   AddNewTaskSchema,
   BoardById,
+  ChangeTaskColumn,
+  ChangeTaskColumnSchema,
   UpdateTask,
   UpdateTaskSchema,
 } from "./types.BoardManager";
@@ -287,6 +289,22 @@ export const deleteBoard = async (boardId: number) => {
       .where("id", "=", boardId)
       .executeTakeFirst();
 
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const changeTaskColumn = async (data: ChangeTaskColumn) => {
+  try {
+    ChangeTaskColumnSchema.parse(data);
+    const result = await db
+      .updateTable("tasks")
+      .set({
+        column_id: data.columnId,
+      })
+      .where("id", "=", data.taskId)
+      .execute();
     return result;
   } catch (error) {
     throw error;
