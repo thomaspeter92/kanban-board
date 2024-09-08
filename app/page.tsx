@@ -14,6 +14,7 @@ export default async function Home() {
       <div className="space-y-2 my-5 block">
         {boards?.map((board, i) => (
           <Link
+            key={board.id}
             href={"/boards/" + board.id}
             className="p-5 text-left w-full text-gray-darkest flex items-center bg-gray-medium dark:bg-gray-darkest dark:text-gray-medium rounded"
           >
