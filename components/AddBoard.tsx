@@ -7,6 +7,7 @@ import { Icons } from "./Icons";
 import Button from "./Button";
 import { handleAddBoard } from "@/app/(actions)/actions";
 import useModalStore from "@/stores/modalStore";
+import { toast } from "react-toastify";
 
 type Props = {};
 
@@ -35,9 +36,15 @@ const AddBoard = (props: Props) => {
       await handleAddBoard(data);
       toggleModal(null);
       setLoading(false);
+      toast("New board added!", {
+        type: "success",
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);
+      toast("Unable to add board right now.", {
+        type: "error",
+      });
     }
   };
   const addColumn = () => {

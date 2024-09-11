@@ -7,6 +7,8 @@ import Modal from "@/components/Modal";
 import { getAllBoards } from "@/data/BoardManager";
 import Head from "next/head";
 import { redirect } from "next/navigation";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -33,6 +35,16 @@ export default async function RootLayout({
           <main className="flex-1 p-5 overflow-hidden">{children}</main>
         </div>
         <Modal />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </body>
     </html>
   );
